@@ -10,14 +10,14 @@
             {{ despesa.nome }}
           </div>
           <div class="valor-input">
-            <input type="text" align="right" v-model="despesa.valor" >
+            <input type="text" align="right" v-model="despesa.valor" v-bind:style="{ color: inputColor }" >
             <span style="color: rgb(200,200,200); margin-left: 4px; font-size: 35px">€</span>
           </div>
         </div>
 
         <div class="grey-back">
           <div class="mask" v-bind:style="{ 'width': CalcularPercentagemWidth(despesa.valor) + '%'}">
-            <div class="value-gradient">
+            <div class="value-gradient" v-bind:class="[gradientClass]">
 
             </div>
           </div>
@@ -30,49 +30,19 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'HorizontalBarGraph',
   data: function() {
   return {
-    despesas: [
-      {
-        nome: 'Arrendamento',
-        valor: 365
-      },
-      {
-        nome: 'Luz, Água e Gás',
-        valor: 86
-      },
-      {
-        nome: 'Supermercado',
-        valor: 250
-      },
-            {
-        nome: 'Saúde & Fitness',
-        valor: 28
-      },
-                  {
-        nome: 'TV, Net e Voz',
-        valor: 0
-      },
-                  {
-        nome: 'Transporte',
-        valor: 30
-      },
-                  {
-        nome: 'Educação',
-        valor: 110
-      },
-                  {
-        nome: 'Lazer',
-        valor: 188
-      },
-                  {
-        nome: 'Outro',
-        valor: 74
-      },
-    ]
+    despesas: [],
+    gradientClass: 'credit',
+    inputColor:'#F0677C'
     }
+  },
+  computed: {
+    ...mapGetters(['getCreditos', 'getDespesas'])
   },
     methods: {
     CalcularPercentagemWidth: function (valor) {
@@ -89,6 +59,22 @@ export default {
       return percentagem;
 
     }
+  },
+  created() {
+        var pageURL = window.location.href;
+    var lastURLSegment = pageURL.substr(pageURL.lastIndexOf('/') + 1);
+
+    if (lastURLSegment == 'credit') {
+      this.inputColor = '#F0677C';
+      this.gradientClass = lastURLSegment
+      this.despesas = this.getCreditos;
+    } else if (lastURLSegment == 'expense') {
+      this.inputColor = '#826AF9';
+      this.gradientClass = lastURLSegment
+      this.despesas = this.getDespesas;
+    }
+
+    
   }
 
 }
@@ -123,9 +109,19 @@ border-top-style: hidden;
   height: 7px;
   width: 400px;
   background: rgb(29,29,31);
-background: linear-gradient(90deg, rgba(29,29,31,1) 0%, rgba(130,106,249,1) 36%, rgba(163,137,255,1) 100%);
     border-radius: 10px 10px 10px 10px;
 }
+.credit {
+background: rgb(29,29,31);
+background: linear-gradient(90deg, rgba(29,29,31,1) 0%, rgba(249,106,128,1) 100%);
+}
+
+.expense {
+    background: rgb(29,29,31);
+background: linear-gradient(90deg, rgba(29,29,31,1) 0%, rgba(130,106,249,1) 36%, rgba(163,137,255,1) 100%);
+
+}
+
 .mask {
   height: 7px;
   width: 70%;

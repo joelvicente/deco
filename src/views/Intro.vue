@@ -17,7 +17,7 @@ export default {
   },
   methods: {
     EntraNoForm: function() {
-      router.push({ path: '/form/income' })
+      router.push({ path: '/income' })
     }
   }
 }
